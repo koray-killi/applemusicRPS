@@ -47,11 +47,34 @@ class StatusBarController {
         timer?.fire()
     }
 
+    private var hasShownPermissionAlert = false
+
     func poll() {
         let track = musicBridge.currentTrack()
+        if track == nil && !hasShownPermissionAlert {
+            // Music.app çalışıyor mu kontrol et — çalışıyorsa ama nil dönüyorsa izin sorunu
+            let musicRunning = NSWorkspace.shared.runningApplications
+                .contains { $0.bundleIdentifier == "com.apple.Music" }
+            if musicRunning {
+                hasShownPermissionAlert = true
+                showPermissionAlert()
+            }
+        }
         guard track != lastTrack else { return }
         lastTrack = track
         buildMenu(track: track)
         discordBridge?.send(track: track)
+    }
+
+    private func showPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Automation İzni Gerekiyor"
+        alert.informativeText = "System Settings → Privacy & Security → Automation → AppMusicRPS için Music iznini açın."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "System Settings'i Aç")
+        alert.addButton(withTitle: "Kapat")
+        if alert.runModal() == .alertFirstButtonReturn {
+            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation")!)
+        }
     }
 }
