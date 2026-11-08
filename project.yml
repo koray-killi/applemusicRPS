@@ -1,0 +1,38 @@
+name: AppMusicRPS
+options:
+  bundleIdPrefix: com.applemusicrps
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+
+targets:
+  AppMusicRPS:
+    type: application
+    platform: macOS
+    sources:
+      - path: AppMusicRPS
+        excludes:
+          - "Resources/**"
+      - path: AppMusicRPS/Resources
+        type: folder
+        optional: true
+    resources:
+      - AppMusicRPS/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.applemusicrps.app
+        SWIFT_VERSION: 5.0
+        MACOSX_DEPLOYMENT_TARGET: 13.0
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        ENABLE_HARDENED_RUNTIME: NO
+    info:
+      path: AppMusicRPS/Info.plist
+      properties:
+        LSUIElement: true
+        NSAppleEventsUsageDescription: "Apple Music'teki şarkı bilgilerini okumak için gereklidir."
+        CFBundleName: AppMusicRPS
+        CFBundleDisplayName: Apple Music RPS
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"

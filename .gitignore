@@ -1,0 +1,6 @@
+.build/
+AppMusicRPS.app/
+.DS_Store
+*.o
+*.d
+.superpowers/
