@@ -35,6 +35,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Drain Discord responses in background (one long-lived goroutine)
+	go func() {
+		for {
+			if _, _, err := readFrame(conn); err != nil {
+				return
+			}
+		}
+	}()
+
+	nonce := 0
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		var track TrackInfo
@@ -43,6 +53,7 @@ func main() {
 			continue
 		}
 
+		nonce++
 		var payload map[string]any
 		if track.Playing {
 			payload = map[string]any{
@@ -58,7 +69,7 @@ func main() {
 						},
 					},
 				},
-				"nonce": "1",
+				"nonce": fmt.Sprintf("%d", nonce),
 			}
 		} else {
 			payload = map[string]any{
@@ -67,7 +78,7 @@ func main() {
 					"pid":      os.Getpid(),
 					"activity": nil,
 				},
-				"nonce": "2",
+				"nonce": fmt.Sprintf("%d", nonce),
 			}
 		}
 
@@ -75,7 +86,5 @@ func main() {
 			fmt.Fprintln(os.Stderr, "write error:", err)
 			os.Exit(1)
 		}
-		// Read response (non-blocking drain)
-		go readFrame(conn)
 	}
 }

@@ -3,6 +3,7 @@ import Foundation
 class DiscordBridge {
     private var process: Process?
     private var stdinPipe: Pipe?
+    private var isRestarting = false
 
     init() { startProcess() }
 
@@ -16,6 +17,7 @@ class DiscordBridge {
         p.standardInput = input
         p.terminationHandler = { [weak self] _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self?.stdinPipe = nil  // invalidate before restart
                 self?.startProcess()
             }
         }
@@ -25,7 +27,7 @@ class DiscordBridge {
     }
 
     func send(track: TrackInfo?) {
-        guard let stdinPipe else { return }
+        guard let pipe = stdinPipe, process?.isRunning == true else { return }
         let payload: [String: Any]
         if let t = track, t.isPlaying {
             payload = ["title": t.title, "artist": t.artist, "album": t.album, "playing": true]
@@ -34,6 +36,6 @@ class DiscordBridge {
         }
         guard let data = try? JSONSerialization.data(withJSONObject: payload),
               let line = String(data: data, encoding: .utf8) else { return }
-        stdinPipe.fileHandleForWriting.write(Data((line + "\n").utf8))
+        pipe.fileHandleForWriting.write(Data((line + "\n").utf8))
     }
 }
