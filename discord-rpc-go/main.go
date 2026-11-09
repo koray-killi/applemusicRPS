@@ -96,6 +96,7 @@ func main() {
 				assets["large_image"] = "appicon"
 			}
 			activity := map[string]any{
+				"type":    2,
 				"details": track.Title,
 				"state":   track.Artist,
 				"assets":  assets,
