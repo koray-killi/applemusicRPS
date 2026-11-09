@@ -2,7 +2,7 @@
 
 Discord Rich Presence for Apple Music on macOS. Shows the currently playing track with album artwork, artist, and elapsed time.
 
-![Discord Rich Presence preview](docs/preview.png)
+<img src="docs/preview.png" width="400" alt="Discord Rich Presence preview" />
 
 ## Features
 

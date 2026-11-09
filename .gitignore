@@ -4,5 +4,6 @@ AppMusicRPS.app/
 *.o
 *.d
 .superpowers/
+docs/superpowers/
 discord-rpc-go/discord-rpc
 AppMusicRPS/Resources/discord-rpc
