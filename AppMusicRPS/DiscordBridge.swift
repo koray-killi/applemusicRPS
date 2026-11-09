@@ -30,7 +30,11 @@ class DiscordBridge {
         guard let pipe = stdinPipe, process?.isRunning == true else { return }
         let payload: [String: Any]
         if let t = track, t.isPlaying {
-            payload = ["title": t.title, "artist": t.artist, "album": t.album, "playing": true]
+            let now = Date().timeIntervalSince1970
+            let start = now - t.position
+            let end = start + t.duration
+            payload = ["title": t.title, "artist": t.artist, "album": t.album, "playing": true,
+                       "start": Int(start), "end": Int(end)]
         } else {
             payload = ["playing": false]
         }

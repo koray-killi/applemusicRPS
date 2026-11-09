@@ -5,11 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 )
 
 func connectDiscord() (net.Conn, error) {
+	// macOS: $TMPDIR, Linux: /tmp
+	tmpDir := os.Getenv("TMPDIR")
+	if tmpDir == "" {
+		tmpDir = "/tmp"
+	}
 	for i := 0; i < 10; i++ {
-		path := fmt.Sprintf("/tmp/discord-ipc-%d", i)
+		path := fmt.Sprintf("%sdiscord-ipc-%d", tmpDir, i)
 		conn, err := net.Dial("unix", path)
 		if err == nil {
 			return conn, nil
